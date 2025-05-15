@@ -1,5 +1,4 @@
 ---
-# Logstash Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -34,7 +33,6 @@ spec:
           configMap:
             name: logstash-config
 ---
-# Logstash Service
 apiVersion: v1
 kind: Service
 metadata:
@@ -46,7 +44,6 @@ spec:
   selector:
     app: logstash
 ---
-# Logstash ConfigMap for pipeline configuration
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -73,3 +70,22 @@ data:
         index => "middleware-logs-%{+YYYY.MM.dd}"
       }
     }
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: logstash-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: logstash
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 50
