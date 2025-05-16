@@ -84,11 +84,11 @@ pipeline {
                  body: "The pipeline ${env.JOB_NAME} #${env.BUILD_NUMBER} failed.\nCheck the build at ${env.BUILD_URL}"
         }
 
-        always {
-            echo 'Cleaning up Docker images to free space...'
-            sh 'docker rmi ${DOCKERHUB_USERNAME}/frontend:latest || true'
-            sh 'docker rmi ${DOCKERHUB_USERNAME}/middleware:latest || true'
-            sh 'docker rmi ${DOCKERHUB_USERNAME}/model-service:latest || true'
-        }
+        // always {
+        //     echo 'Cleaning up Docker images to free space...'
+        //     sh 'docker rmi ${DOCKERHUB_USERNAME}/frontend:latest || true'
+        //     sh 'docker rmi ${DOCKERHUB_USERNAME}/middleware:latest || true'
+        //     sh 'docker rmi ${DOCKERHUB_USERNAME}/model-service:latest || true'
+        // }
     }
 }
