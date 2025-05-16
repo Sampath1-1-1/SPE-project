@@ -1,12 +1,12 @@
 import os
 
 commands = [
-    "docker build -t aaradhyaghota/middleware:latest /home/aaradhya-ghota/SoftwareProduction/Major_Project_spe/Backend/MiddleWare",
-    "docker build -t aaradhyaghota/model-service:latest /home/aaradhya-ghota/SoftwareProduction/Major_Project_spe/Backend/Model-service",
-    "docker build -t aaradhyaghota/frontend:latest /home/aaradhya-ghota/SoftwareProduction/Major_Project_spe/frontend",
-    "docker push aaradhyaghota/middleware:latest",
-    "docker push aaradhyaghota/model-service:latest",
-    "docker push aaradhyaghota/frontend:latest",
+    "docker build -t sampath333/middleware:latest /home/sampathkumar/Desktop/Major_Project_spe/Major_Project_spe/Backend/MiddleWare",
+    "docker build -t sampath333/model-service:latest /home/sampathkumar/Desktop/Major_Project_spe/Major_Project_spe/Backend/Model-service",
+    "docker build -t sampath333/frontend:latest /home/sampathkumar/Desktop/Major_Project_spe/Major_Project_spe/frontend",
+    "docker push sampath333/middleware:latest",
+    "docker push sampath333/model-service:latest",
+    "docker push sampath333/frontend:latest",
     "kubectl apply -f /home/aaradhya-ghota/SoftwareProduction/Major_Project_spe/Backend/Kubernates/frontend.yaml",
     "kubectl apply -f /home/aaradhya-ghota/SoftwareProduction/Major_Project_spe/Backend/Kubernates/mysql.yaml",
     "kubectl apply -f /home/aaradhya-ghota/SoftwareProduction/Major_Project_spe/Backend/Kubernates/model-service.yaml",

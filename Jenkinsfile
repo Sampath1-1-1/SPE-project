@@ -2,10 +2,10 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('DockerHubCred') // ID from Jenkins credentials
-        DOCKERHUB_USERNAME = 'sampath333'                    // Your Docker Hub username
-        GIT_REPO_URL = 'https://github.com/Sampath1-1-1/SPE_Project.git' // GitHub repo URL
-        EMAIL_RECIPIENT = 'sampathkumar1011c@gmail.com'      // Email for notifications
+        DOCKERHUB_CREDENTIALS = credentials('DockerHubCred')
+        DOCKERHUB_USERNAME = 'sampath333'
+        GIT_REPO_URL = 'https://github.com/Sampath1-1-1/SPE_Project.git'
+        EMAIL_RECIPIENT = 'sampathkumar1011c@gmail.com'
     }
 
     stages {
@@ -13,8 +13,6 @@ pipeline {
             steps {
                 echo 'Checking out code from GitHub...'
                 git url: "${GIT_REPO_URL}", branch: 'main'
-                // Alternative:
-                // checkout([$class: 'GitSCM', userRemoteConfigs: [[url: "${GIT_REPO_URL}"]], branches: [[name: '*/main']]])
             }
         }
 
@@ -31,16 +29,22 @@ pipeline {
             steps {
                 echo 'Building Docker images...'
 
+                echo 'Listing frontend directory contents...'
                 dir('frontend') {
-                    sh 'docker build -t ${DOCKERHUB_USERNAME}/frontend:latest .'
+                    sh 'ls -la'
+                    sh 'docker build -t ${DOCKERHUB_USERNAME}/frontend:latest . || { echo "Frontend build failed"; exit 1; }'
                 }
 
-                dir('venv') {
-                    sh 'docker build -t ${DOCKERHUB_USERNAME}/middleware:latest .'
+                echo 'Listing Backend/MiddleWare directory contents...'
+                dir('Backend/MiddleWare') {
+                    sh 'ls -la'
+                    sh 'docker build -t ${DOCKERHUB_USERNAME}/middleware:latest . || { echo "Middleware build failed"; exit 1; }'
                 }
 
-                dir('Model-service') {
-                    sh 'docker build -t ${DOCKERHUB_USERNAME}/model-service:latest .'
+                echo 'Listing Backend/Model-service directory contents...'
+                dir('Backend/Model-service') {
+                    sh 'ls -la'
+                    sh 'docker build -t ${DOCKERHUB_USERNAME}/model-service:latest . || { echo "Model-service build failed"; exit 1; }'
                 }
 
                 echo 'Logging into Docker Hub...'
@@ -57,6 +61,7 @@ pipeline {
             steps {
                 echo 'Deploying to Kubernetes using Ansible...'
                 dir('ansible') {
+                    sh 'ls -la ../Kubernetes/'
                     sh 'ansible-playbook -i inventory.yml deploy.yml'
                 }
             }
