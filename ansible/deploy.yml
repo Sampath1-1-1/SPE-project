@@ -1,4 +1,15 @@
 ---
-- hosts: localhost
-  roles:
-    - deploy_k8s
+   - hosts: localhost
+     vars:
+       manifests_dir: "{{ playbook_dir }}/../Backend/Kubernates"
+     tasks:
+       - name: Copy Kubernetes manifests deployment script
+         template:
+           src: manifests.j2
+           dest: /tmp/deploy_manifests.sh
+           mode: '0755'
+
+       - name: Deploy Kubernetes manifests
+         command: /tmp/deploy_manifests.sh
+         become: yes
+         become_user: jenkins
