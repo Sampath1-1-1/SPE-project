@@ -9,21 +9,10 @@ pipeline {
     }
 
     stages {
-        stage('Clean Workspace') {
-            steps {
-                echo 'Cleaning workspace to ensure fresh checkout...'
-                deleteDir()
-            }
-        }
-
         stage('Checkout Code') {
             steps {
                 echo 'Checking out code from GitHub...'
                 git url: "${GIT_REPO_URL}", branch: 'main'
-
-                echo 'Verifying Git branch and commit...'
-                sh 'git branch --show-current'
-                sh 'git log -1'
             }
         }
 
@@ -72,25 +61,10 @@ pipeline {
             steps {
                 echo 'Deploying to Kubernetes using Ansible...'
                 dir('ansible') {
-                    echo 'Listing ansible directory contents...'
-                    sh 'ls -la .'
-
-                    echo 'Displaying contents of deploy.yml...'
-                    sh 'cat deploy.yml'
-
                     echo 'Listing Backend/Kubernates directory contents...'
                     sh 'ls -la ../Backend/Kubernates/'
-
                     sh 'ansible-playbook -i inventory.yml deploy.yml'
                 }
-            }
-        }
-
-        stage('Verify Deployment') {
-            steps {
-                echo 'Verifying deployment...'
-                sh 'kubectl get pods'
-                sh 'kubectl get svc'
             }
         }
     }
