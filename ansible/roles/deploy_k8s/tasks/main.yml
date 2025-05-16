@@ -1,9 +1,4 @@
 ---
-- name: Generate phishing-mysql-secret manifest
-  template:
-    src: phishing-mysql-secret.j2
-    dest: "{{ manifests_dir }}/phishing-mysql-secret.yaml"
-    mode: '0644'
 - name: Copy Kubernetes manifests deployment script
   template:
     src: manifests.j2
