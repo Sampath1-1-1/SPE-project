@@ -15,9 +15,19 @@ commands = [
     "kubectl apply -f /home/sampathkumar/Desktop/Major_Project_spe/Major_Project_spe/Backend/Kubernates/frontend.yaml",
     "kubectl apply -f /home/sampathkumar/Desktop/Major_Project_spe/Major_Project_spe/Backend/Kubernates/elasticsearch.yaml",
     "kubectl apply -f /home/sampathkumar/Desktop/Major_Project_spe/Major_Project_spe/Backend/Kubernates/kibana",
-    "kubectl apply -f /home/sampathkumar/Desktop/Major_Project_spe/Major_Project_spe/Backend/Kubernates/logstash
+    "kubectl apply -f /home/sampathkumar/Desktop/Major_Project_spe/Major_Project_spe/Backend/Kubernates/logstash"
     ]
 
 for cmd in commands:
     print(f"\nRunning: {cmd}")
     os.system(cmd)
+
+
+
+
+/home/sampathkumar/Desktop/Major_Project_spe/Major_Project_spe/ansible/playbooks/deploy.yml
+/home/sampathkumar/Desktop/Major_Project_spe/Major_Project_spe/ansible/roles/deploy_k8s/tasks/main.yml
+/home/sampathkumar/Desktop/Major_Project_spe/Major_Project_spe/ansible/roles/deploy_k8s/templates/manifests.j2
+/home/sampathkumar/Desktop/Major_Project_spe/Major_Project_spe/ansible/roles/deploy_k8s/vars/main.yml
+/home/sampathkumar/Desktop/Major_Project_spe/Major_Project_spe/ansible/deploy.yml
+/home/sampathkumar/Desktop/Major_Project_spe/Major_Project_spe/ansible/inventory.yml
