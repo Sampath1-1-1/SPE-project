@@ -14,8 +14,8 @@ commands = [
     "kubectl apply -f /home/aaradhya-ghota/SoftwareProduction/Major_Project_spe/Backend/Kubernates/middleware.yaml",
     "kubectl apply -f /home/sampathkumar/Desktop/Major_Project_spe/Major_Project_spe/Backend/Kubernates/frontend.yaml",
     "kubectl apply -f /home/sampathkumar/Desktop/Major_Project_spe/Major_Project_spe/Backend/Kubernates/elasticsearch.yaml",
-    "kubectl apply -f /home/sampathkumar/Desktop/Major_Project_spe/Major_Project_spe/Backend/Kubernates/kibana",
-    "kubectl apply -f /home/sampathkumar/Desktop/Major_Project_spe/Major_Project_spe/Backend/Kubernates/logstash"
+    "kubectl apply -f /home/sampathkumar/Desktop/Major_Project_spe/Major_Project_spe/Backend/Kubernates/kibana.yaml",
+    "kubectl apply -f /home/sampathkumar/Desktop/Major_Project_spe/Major_Project_spe/Backend/Kubernates/logstash.yaml"
     ]
 
 for cmd in commands:
