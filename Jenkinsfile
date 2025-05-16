@@ -81,6 +81,7 @@ pipeline {
             sh 'docker rmi ${DOCKERHUB_USERNAME}/model-service:latest || true'
         }
     }
+ 
     
 }
 // 
