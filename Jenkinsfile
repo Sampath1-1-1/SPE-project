@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKERHUB_CREDENTIALS = credentials('DockerHubCred') // ID from Jenkins credentials
         DOCKERHUB_USERNAME = '<sampath333>'     // Your Docker Hub username
-        GIT_REPO_URL = '<https://github.com/Sampath1-1-1/SPE_Project>'              // Your GitHub repo URL
+        GIT_REPO_URL = '<https://github.com/Sampath1-1-1/SPE_Project.git>'              // Your GitHub repo URL
         EMAIL_RECIPIENT = '<sampathkumar1011c@gmail.com>'                     // Your email for notifications
     }
 
