@@ -1,2 +1,2 @@
 ---
-manifests_dir: "{{ playbook_dir }}/../Kubernetes"
+manifests_dir: "{{ playbook_dir }}/../Backend/Kubernates"
