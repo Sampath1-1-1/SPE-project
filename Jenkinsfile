@@ -3,9 +3,9 @@ pipeline {
 
     environment {
         DOCKERHUB_CREDENTIALS = credentials('DockerHubCred') // ID from Jenkins credentials
-        DOCKERHUB_USERNAME = '<sampath333>'     // Your Docker Hub username
-        GIT_REPO_URL = '<https://github.com/Sampath1-1-1/SPE_Project.git>'              // Your GitHub repo URL
-        EMAIL_RECIPIENT = '<sampathkumar1011c@gmail.com>'                     // Your email for notifications
+        DOCKERHUB_USERNAME = 'sampath333'                    // Your Docker Hub username
+        GIT_REPO_URL = 'https://github.com/Sampath1-1-1/SPE_Project.git' // GitHub repo URL
+        EMAIL_RECIPIENT = 'sampathkumar1011c@gmail.com'      // Email for notifications
     }
 
     stages {
@@ -13,6 +13,8 @@ pipeline {
             steps {
                 echo 'Checking out code from GitHub...'
                 git url: "${GIT_REPO_URL}", branch: 'main'
+                // Alternative:
+                // checkout([$class: 'GitSCM', userRemoteConfigs: [[url: "${GIT_REPO_URL}"]], branches: [[name: '*/main']]])
             }
         }
 
@@ -28,15 +30,15 @@ pipeline {
         stage('Build and Push Docker Images') {
             steps {
                 echo 'Building Docker images...'
-                // Build frontend image
+
                 dir('frontend') {
                     sh 'docker build -t ${DOCKERHUB_USERNAME}/frontend:latest .'
                 }
-                // Build middleware image
+
                 dir('venv') {
                     sh 'docker build -t ${DOCKERHUB_USERNAME}/middleware:latest .'
                 }
-                // Build model-service image
+
                 dir('Model-service') {
                     sh 'docker build -t ${DOCKERHUB_USERNAME}/model-service:latest .'
                 }
@@ -65,15 +67,17 @@ pipeline {
         success {
             echo 'Pipeline completed successfully!'
             mail to: "${EMAIL_RECIPIENT}",
-                 subject: "Jenkins Pipeline Success: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                 subject: "✅ Jenkins Pipeline Success: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                  body: "The pipeline ${env.JOB_NAME} #${env.BUILD_NUMBER} completed successfully.\nCheck the build at ${env.BUILD_URL}"
         }
+
         failure {
             echo 'Pipeline failed!'
             mail to: "${EMAIL_RECIPIENT}",
-                 subject: "Jenkins Pipeline Failure: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                 subject: "❌ Jenkins Pipeline Failure: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                  body: "The pipeline ${env.JOB_NAME} #${env.BUILD_NUMBER} failed.\nCheck the build at ${env.BUILD_URL}"
         }
+
         always {
             echo 'Cleaning up Docker images to free space...'
             sh 'docker rmi ${DOCKERHUB_USERNAME}/frontend:latest || true'
@@ -81,7 +85,4 @@ pipeline {
             sh 'docker rmi ${DOCKERHUB_USERNAME}/model-service:latest || true'
         }
     }
- 
-    
 }
-// 
