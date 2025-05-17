@@ -1,24 +1,4 @@
-# #!/bin/bash
-# kubectl apply -f {{ manifests_dir }}/phishing-mysql-secret.yaml
-# kubectl apply -f {{ manifests_dir }}/mysql.yaml
-# kubectl apply -f {{ manifests_dir }}/model-service.yaml
-# kubectl apply -f {{ manifests_dir }}/middleware.yaml
-# kubectl apply -f {{ manifests_dir }}/frontend.yaml
-# kubectl apply -f {{ manifests_dir }}/elasticsearch.yaml
-# kubectl apply -f {{ manifests_dir }}/kibana.yaml
-# kubectl apply -f {{ manifests_dir }}/logstash.yaml
-
-
-!/bin/bash
-
-# Start Minikube cluster
-minikube start  --driver=docker
-
-# Wait for Minikube to be ready
-echo "Waiting for Minikube to be ready..."
-kubectl wait --for=condition=Ready node --all --timeout=100s
-
-# Apply Kubernetes manifests
+#!/bin/bash
 kubectl apply -f {{ manifests_dir }}/phishing-mysql-secret.yaml
 kubectl apply -f {{ manifests_dir }}/mysql.yaml
 kubectl apply -f {{ manifests_dir }}/model-service.yaml
@@ -27,7 +7,3 @@ kubectl apply -f {{ manifests_dir }}/frontend.yaml
 kubectl apply -f {{ manifests_dir }}/elasticsearch.yaml
 kubectl apply -f {{ manifests_dir }}/kibana.yaml
 kubectl apply -f {{ manifests_dir }}/logstash.yaml
-
-
-
-
