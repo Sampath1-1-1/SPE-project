@@ -1,62 +1,49 @@
 ---
-- name: Ensure Docker is installed
-  ansible.builtin.package:
-    name: docker.io
-    state: present
-  become: yes
-
-- name: Ensure Docker Compose is installed
-  ansible.builtin.get_url:
-    url: https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-linux-x86_64
-    dest: /usr/local/bin/docker-compose
-    mode: '0755'
-    checksum: sha256:{{ docker_compose_checksum }}
-  become: yes
-
-- name: Create Docker Compose project directory
+- name: Ensure project directory exists
   ansible.builtin.file:
     path: "{{ compose_project_dir }}"
     state: directory
+    owner: jenkins
+    group: jenkins
     mode: '0755'
-  become: yes
-  become_user: jenkins
 
-- name: Copy Docker Compose configuration
+- name: Template Docker Compose configuration
   ansible.builtin.template:
     src: docker-compose.j2
     dest: "{{ compose_project_dir }}/docker-compose.yml"
+    owner: jenkins
+    group: jenkins
     mode: '0644'
-  become: yes
-  become_user: jenkins
 
-- name: Copy MySQL initialization script
+- name: Template init.sql
   ansible.builtin.template:
     src: initsql.j2
     dest: "{{ compose_project_dir }}/init.sql"
+    owner: jenkins
+    group: jenkins
     mode: '0644'
-  become: yes
-  become_user: jenkins
 
-- name: Copy Logstash configuration
+- name: Template Logstash configuration
   ansible.builtin.template:
     src: logstash.conf..j2
     dest: "{{ compose_project_dir }}/logstash.conf"
+    owner: jenkins
+    group: jenkins
     mode: '0644'
-  become: yes
-  become_user: jenkins
 
-- name: Ensure Docker service is running
-  ansible.builtin.service:
-    name: docker
-    state: started
-    enabled: yes
-  become: yes
+- name: Ensure Docker Compose is installed
+  ansible.builtin.stat:
+    path: /usr/local/bin/docker-compose
+  register: docker_compose_stat
 
-- name: Run Docker Compose
+- name: Fail if Docker Compose is not installed
+  ansible.builtin.fail:
+    msg: "Docker Compose is not installed at /usr/local/bin/docker-compose. Please install it."
+  when: not docker_compose_stat.stat.exists
+
+- name: Start Docker Compose services
   ansible.builtin.command:
-    cmd: docker-compose -f {{ compose_project_dir }}/docker-compose.yml up -d
+    cmd: /usr/local/bin/docker-compose -f {{ compose_project_dir }}/docker-compose.yml up -d
     chdir: "{{ compose_project_dir }}"
-  become: yes
-  become_user: jenkins
-  register: compose_result
-  changed_when: compose_result.rc == 0
+  register: compose_up
+  changed_when: compose_up.rc == 0

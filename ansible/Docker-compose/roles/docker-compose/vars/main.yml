@@ -1,3 +1,3 @@
 ---
 compose_project_dir: "/home/jenkins/docker-compose-project"
-docker_compose_checksum: "sha256:8f9b6c6e093d0c1b3c7e7b0b2f7f8a9c4b6d5e7f8a9c4b6d5e7f8a9c4b6d5e7"  # Replace with actual checksum
+mysql_root_password: "secure_password_123"

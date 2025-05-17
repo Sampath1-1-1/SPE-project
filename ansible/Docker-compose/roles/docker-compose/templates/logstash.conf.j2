@@ -1,20 +1,18 @@
 input {
-  tcp {
-    port => 5044
-    codec => json
+  jdbc {
+    jdbc_driver_library => "/usr/share/logstash/mysql-connector-java.jar"
+    jdbc_driver_class => "com.mysql.cj.jdbc.Driver"
+    jdbc_connection_string => "jdbc:mysql://mysql:3306/phishing_db?useSSL=false"
+    jdbc_user => "root"
+    jdbc_password => "{{ mysql_root_password }}"
+    statement => "SELECT * FROM phishing_urls WHERE created_at > :sql_last_value"
+    schedule => "* * * * *"
   }
 }
-filter {
-  if [message] and "_jsonparsefailure" in [tags] {
-    mutate {
-      add_field => { "malformed_log" => "%{message}" }
-      remove_field => ["message"]
-    }
-  }
-}
+
 output {
-  elasticsearch {
-    hosts => ["http://elasticsearch:9200"]
-    index => "middleware-logs-%{+YYYY.MM.dd}"
+  stdout { codec => rubydebug }
+  file {
+    path => "/usr/share/logstash/logs/phishing_urls.log"
   }
 }
