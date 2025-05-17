@@ -25,7 +25,7 @@
 
 - name: Template Logstash configuration
   ansible.builtin.template:
-    src: logstash.conf..j2
+    src: logstash.conf.j2
     dest: "{{ compose_project_dir }}/logstash.conf"
     owner: jenkins
     group: jenkins
