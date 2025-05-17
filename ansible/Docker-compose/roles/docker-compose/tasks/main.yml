@@ -46,4 +46,4 @@
     cmd: /usr/local/bin/docker-compose -f {{ compose_project_dir }}/docker-compose.yml up -d
     chdir: "{{ compose_project_dir }}"
   register: compose_up
-  changed_when: compose_up.rc == 0
+  changed_when: compose_up.rc is defined and compose_up.rc == 0
