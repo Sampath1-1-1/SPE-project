@@ -31,7 +31,7 @@
 
 - name: Copy MySQL initialization script
   ansible.builtin.template:
-    src: init.sql.j2
+    src: initsql.j2
     dest: "{{ compose_project_dir }}/init.sql"
     mode: '0644'
   become: yes
