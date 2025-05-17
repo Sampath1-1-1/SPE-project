@@ -31,12 +31,20 @@
     group: jenkins
     mode: '0644'
 
+- name: Copy MySQL JDBC driver for Logstash
+  ansible.builtin.copy:
+    src: mysql-connector-java.jar
+    dest: "{{ compose_project_dir }}/mysql-connector-java.jar"
+    owner: jenkins
+    group: jenkins
+    mode: '0644'
+
 - name: Ensure Docker Compose is installed
   ansible.builtin.stat:
     path: /usr/local/bin/docker-compose
   register: docker_compose_stat
 
-- name: Fail if Docker Compose is not installed
+- name: Fail if Docker Compose is installed
   ansible.builtin.fail:
     msg: "Docker Compose is not installed at /usr/local/bin/docker-compose. Please install it."
   when: not docker_compose_stat.stat.exists

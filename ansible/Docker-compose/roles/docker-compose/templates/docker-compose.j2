@@ -47,13 +47,39 @@ services:
     image: docker.elastic.co/logstash/logstash:7.17.0
     volumes:
       - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+      - ./mysql-connector-java.jar:/usr/share/logstash/mysql-connector-java.jar
     depends_on:
       - mysql
+      - elasticsearch
+    networks:
+      - app-network
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.17.0
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+    networks:
+      - app-network
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
     networks:
       - app-network
 
 volumes:
   mysql-data:
+  es-data:
 
 networks:
   app-network:

@@ -12,7 +12,8 @@ input {
 
 output {
   stdout { codec => rubydebug }
-  file {
-    path => "/usr/share/logstash/logs/phishing_urls.log"
+  elasticsearch {
+    hosts => ["http://elasticsearch:9200"]
+    index => "phishing_urls"
   }
 }
