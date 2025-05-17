@@ -31,3 +31,13 @@ for cmd in commands:
 /home/sampathkumar/Desktop/Major_Project_spe/ansible/roles/deploy_k8s/vars/main.yml
 /home/sampathkumar/Desktop/Major_Project_spe/ansible/deploy.yml
 /home/sampathkumar/Desktop/Major_Project_spe/ansible/inventory.yml
+
+
+
+/home/sampathkumar/Desktop/Major_Project_spe (copy)/ansible/Docker-compose/roles/docker-compose/tasks/main.yml
+/home/sampathkumar/Desktop/Major_Project_spe (copy)/ansible/Docker-compose/roles/docker-compose/templates/docker-compose.j2
+/home/sampathkumar/Desktop/Major_Project_spe (copy)/ansible/Docker-compose/roles/docker-compose/templates/initsql.j2
+/home/sampathkumar/Desktop/Major_Project_spe (copy)/ansible/Docker-compose/roles/docker-compose/templates/logstash.conf..j2
+/home/sampathkumar/Desktop/Major_Project_spe (copy)/ansible/Docker-compose/roles/docker-compose/vars/main.yml
+/home/sampathkumar/Desktop/Major_Project_spe (copy)/ansible/Docker-compose/deploy.yml
+/home/sampathkumar/Desktop/Major_Project_spe (copy)/ansible/Docker-compose/inventory.yml

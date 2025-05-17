@@ -103,6 +103,7 @@
 
 
 
+
 pipeline {
     agent any
 
@@ -117,6 +118,7 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 echo 'Checking out code from GitHub...'
+                sh 'git clean -fdx'  // Clean workspace before checkout
                 git url: "${GIT_REPO_URL}", branch: 'main'
             }
         }
@@ -165,10 +167,13 @@ pipeline {
         stage('Deploy to Docker Compose') {
             steps {
                 echo 'Deploying to Docker Compose using Ansible...'
-                dir('ansible/docker-compose') {
+                dir('ansible/Docker-compose') {
                     echo 'Listing Docker-Compose directory contents...'
                     sh 'ls -la ../../Docker-Compose/'
-                    sh 'ansible-playbook -i inventory.yml deploy.yml'
+                    sh 'ls -la . || { echo "Ansible Docker-compose directory not found"; exit 1; }'
+                    sh 'ls -la deploy.yml || { echo "deploy.yml not found"; exit 1; }'
+                    sh 'ansible-playbook -i inventory.yml deploy.yml --check || { echo "Ansible playbook dry run failed"; exit 1; }'
+                    sh 'ansible-playbook -i inventory.yml deploy.yml || { echo "Ansible playbook failed"; exit 1; }'
                 }
             }
         }
@@ -197,6 +202,7 @@ pipeline {
                  body: "The pipeline ${env.JOB_NAME} #${env.BUILD_NUMBER} failed.\nCheck the build at ${env.BUILD_URL}"
         }
 
+
         always {
             echo 'Cleaning up Docker images to free space...'
             sh 'docker rmi ${DOCKERHUB_USERNAME}/frontend:latest || true'
@@ -205,3 +211,4 @@ pipeline {
         }
     }
 }
+
