@@ -41,6 +41,16 @@
     msg: "Docker Compose is not installed at /usr/local/bin/docker-compose. Please install it."
   when: not docker_compose_stat.stat.exists
 
+- name: Verify project directory exists before starting services
+  ansible.builtin.stat:
+    path: "{{ compose_project_dir }}"
+  register: project_dir_stat
+
+- name: Fail if project directory does not exist
+  ansible.builtin.fail:
+    msg: "Project directory {{ compose_project_dir }} does not exist."
+  when: not project_dir_stat.stat.exists
+
 - name: Start Docker Compose services
   ansible.builtin.command:
     cmd: /usr/local/bin/docker-compose -f {{ compose_project_dir }}/docker-compose.yml up -d
