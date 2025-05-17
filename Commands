@@ -34,3 +34,5 @@ sudo chown -R jenkins:jenkins /var/lib/jenkins/.kube
 
 # Test kubectl access from Jenkins user
 sudo -u jenkins kubectl cluster-info
+
+
