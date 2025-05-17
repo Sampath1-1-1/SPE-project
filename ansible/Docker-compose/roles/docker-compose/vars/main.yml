@@ -1,0 +1,3 @@
+---
+compose_project_dir: "/home/jenkins/docker-compose-project"
+docker_compose_checksum: "sha256:6e3c7f6b4b9c3f7e7d3b2c7f8a9c4b6d5e7f8a9c4b6d5e7f8a9c4b6d5e7f8a9"  # Replace with actual checksum for Docker Compose v2.20.2

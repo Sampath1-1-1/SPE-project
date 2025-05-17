@@ -1,0 +1,6 @@
+---
+- name: Deploy application using Docker Compose
+  hosts: localhost
+  connection: local
+  roles:
+    - deploy_compose

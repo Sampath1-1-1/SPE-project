@@ -25,9 +25,9 @@ for cmd in commands:
 
 
 
-/home/sampathkumar/Desktop/Major_Project_spe/Major_Project_spe/ansible/playbooks/deploy.yml
-/home/sampathkumar/Desktop/Major_Project_spe/Major_Project_spe/ansible/roles/deploy_k8s/tasks/main.yml
-/home/sampathkumar/Desktop/Major_Project_spe/Major_Project_spe/ansible/roles/deploy_k8s/templates/manifests.j2
-/home/sampathkumar/Desktop/Major_Project_spe/Major_Project_spe/ansible/roles/deploy_k8s/vars/main.yml
-/home/sampathkumar/Desktop/Major_Project_spe/Major_Project_spe/ansible/deploy.yml
-/home/sampathkumar/Desktop/Major_Project_spe/Major_Project_spe/ansible/inventory.yml
+/home/sampathkumar/Desktop/Major_Project_spe/ansible/playbooks/deploy.yml
+/home/sampathkumar/Desktop/Major_Project_spe/ansible/roles/deploy_k8s/tasks/main.yml
+/home/sampathkumar/Desktop/Major_Project_spe/ansible/roles/deploy_k8s/templates/manifests.j2
+/home/sampathkumar/Desktop/Major_Project_spe/ansible/roles/deploy_k8s/vars/main.yml
+/home/sampathkumar/Desktop/Major_Project_spe/ansible/deploy.yml
+/home/sampathkumar/Desktop/Major_Project_spe/ansible/inventory.yml
