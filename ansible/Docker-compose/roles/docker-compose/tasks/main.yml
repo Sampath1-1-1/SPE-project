@@ -1,67 +1,59 @@
 ---
-- name: Ensure project directory exists
-  ansible.builtin.file:
-    path: "{{ compose_project_dir }}"
-    state: directory
-    owner: jenkins
-    group: jenkins
-    mode: '0755'
-
-- name: Template Docker Compose configuration
-  ansible.builtin.template:
-    src: docker-compose.j2
-    dest: "{{ compose_project_dir }}/docker-compose.yml"
-    owner: jenkins
-    group: jenkins
-    mode: '0644'
-
-- name: Template init.sql
-  ansible.builtin.template:
-    src: initsql.j2
-    dest: "{{ compose_project_dir }}/init.sql"
-    owner: jenkins
-    group: jenkins
-    mode: '0644'
-
-- name: Template Logstash configuration
-  ansible.builtin.template:
-    src: logstash.conf.j2
-    dest: "{{ compose_project_dir }}/logstash.conf"
-    owner: jenkins
-    group: jenkins
-    mode: '0644'
-
-- name: Copy MySQL JDBC driver for Logstash
-  ansible.builtin.copy:
-    src: mysql-connector-java.jar
-    dest: "{{ compose_project_dir }}/mysql-connector-java.jar"
-    owner: jenkins
-    group: jenkins
-    mode: '0644'
+- name: Ensure Docker is installed
+  package:
+    name: docker.io
+    state: present
+  become: yes
 
 - name: Ensure Docker Compose is installed
-  ansible.builtin.stat:
-    path: /usr/local/bin/docker-compose
-  register: docker_compose_stat
+  package:
+    name: docker-compose
+    state: present
+  become: yes
 
-- name: Fail if Docker Compose is installed
-  ansible.builtin.fail:
-    msg: "Docker Compose is not installed at /usr/local/bin/docker-compose. Please install it."
-  when: not docker_compose_stat.stat.exists
+- name: Ensure deployment directory exists
+  file:
+    path: "{{ deploy_dir }}"
+    state: directory
+    mode: '0755'
+  become: yes
+  become_user: jenkins
 
-- name: Verify project directory exists before starting services
-  ansible.builtin.stat:
-    path: "{{ compose_project_dir }}"
-  register: project_dir_stat
+- name: Copy Docker Compose file
+  template:
+    src: docker-compose.j2
+    dest: "{{ deploy_dir }}/docker-compose.yml"
+    mode: '0644'
+  become: yes
+  become_user: jenkins
 
-- name: Fail if project directory does not exist
-  ansible.builtin.fail:
-    msg: "Project directory {{ compose_project_dir }} does not exist."
-  when: not project_dir_stat.stat.exists
+- name: Copy MySQL init script
+  template:
+    src: init.sql.j2
+    dest: "{{ deploy_dir }}/init.sql"
+    mode: '0644'
+  become: yes
+  become_user: jenkins
+
+- name: Copy Logstash configuration
+  template:
+    src: logstash.conf.j2
+    dest: "{{ deploy_dir }}/logstash.conf"
+    mode: '0644'
+  become: yes
+  become_user: jenkins
+
+- name: Stop existing Docker Compose services
+  command: docker-compose -f {{ deploy_dir }}/docker-compose.yml down
+  args:
+    chdir: "{{ deploy_dir }}"
+  become: yes
+  become_user: jenkins
+  ignore_errors: yes
 
 - name: Start Docker Compose services
-  ansible.builtin.command:
-    cmd: /usr/local/bin/docker-compose -f {{ compose_project_dir }}/docker-compose.yml up -d
-    chdir: "{{ compose_project_dir }}"
-  register: compose_up
-  changed_when: compose_up.rc is defined and compose_up.rc == 0
+  command: docker-compose -f {{ deploy_dir }}/docker-compose.yml up -d
+  args:
+    chdir: "{{ deploy_dir }}"
+  become: yes
+  become_user: jenkins

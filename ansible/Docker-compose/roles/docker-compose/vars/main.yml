@@ -1,3 +1,3 @@
 ---
-compose_project_dir: "/home/jenkins/docker-compose-project"
-mysql_root_password: "secure_password_123"
+source_compose_dir: "{{ playbook_dir }}/../../Docker-Compose"
+deploy_dir: "{{ playbook_dir }}/deploy"
