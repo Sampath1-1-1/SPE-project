@@ -11,7 +11,7 @@
     - name: Fail if Docker is not installed
       ansible.builtin.fail:
         msg: "Docker is not installed. Please install Docker on the host."
-      when: docker_check.rc != 0
+      when: docker_check is defined and docker_check.rc is defined and docker_check.rc != 0
 
     - name: Include Docker Compose deployment role
       ansible.builtin.include_role:
