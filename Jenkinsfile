@@ -71,9 +71,9 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 echo 'Deploying to Kubernetes using Ansible...'
-                dir('ansible') {
+                dir('ansible/kubernetes') {
                     echo 'Listing Backend/Kubernates directory contents...'
-                    sh 'ls -la ../Backend/Kubernates/'
+                    sh 'ls -la ../../Backend/Kubernates/'
                     sh 'ansible-playbook -i inventory.yml deploy.yml'
                 }
             }
