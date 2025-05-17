@@ -102,28 +102,21 @@
 // }
 
 
-
-
 pipeline {
     agent any
-
     environment {
         DOCKERHUB_CREDENTIALS = credentials('DockerHubCred')
         DOCKERHUB_USERNAME = 'sampath333'
         GIT_REPO_URL = 'https://github.com/Sampath1-1-1/SPE_Project.git'
         EMAIL_RECIPIENT = 'sampathkumar1011c@gmail.com'
-        COMPOSE_PROJECT_DIR = '/home/jenkins/docker-compose-project'
     }
-
     stages {
         stage('Checkout Code') {
             steps {
                 echo 'Checking out code from GitHub...'
-                sh 'git clean -fdx'  // Clean workspace before checkout
                 git url: "${GIT_REPO_URL}", branch: 'main'
             }
         }
-
         stage('Run Tests') {
             steps {
                 echo 'Running automated tests...'
@@ -132,62 +125,52 @@ pipeline {
                 }
             }
         }
-
         stage('Build and Push Docker Images') {
             steps {
                 echo 'Building Docker images...'
-
                 echo 'Listing frontend directory contents...'
-                dir('frontend') {
+                dir('Frontend') {
                     sh 'ls -la'
                     sh 'docker build -t ${DOCKERHUB_USERNAME}/frontend:latest . || { echo "Frontend build failed"; exit 1; }'
                 }
-
                 echo 'Listing Backend/MiddleWare directory contents...'
                 dir('Backend/MiddleWare') {
                     sh 'ls -la'
                     sh 'docker build -t ${DOCKERHUB_USERNAME}/middleware:latest . || { echo "Middleware build failed"; exit 1; }'
                 }
-
-                echo 'Listing Backend/Model-service directory contents...'
-                dir('Backend/Model-service') {
+                echo 'Listing Backend/Model directory contents...'
+                dir('Backend/Model') {
                     sh 'ls -la'
                     sh 'docker build -t ${DOCKERHUB_USERNAME}/model-service:latest . || { echo "Model-service build failed"; exit 1; }'
                 }
-
                 echo 'Logging into Docker Hub...'
                 sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_USERNAME --password-stdin'
-
                 echo 'Pushing Docker images to Docker Hub...'
                 sh 'docker push ${DOCKERHUB_USERNAME}/frontend:latest'
                 sh 'docker push ${DOCKERHUB_USERNAME}/middleware:latest'
                 sh 'docker push ${DOCKERHUB_USERNAME}/model-service:latest'
             }
         }
-
         stage('Deploy to Docker Compose') {
             steps {
                 echo 'Deploying to Docker Compose using Ansible...'
                 dir('ansible/Docker-compose') {
-                    echo 'Listing Docker-Compose directory contents...'
-                    sh 'ls -la ../../Docker-Compose/'
-                    sh 'ls -la . || { echo "Ansible Docker-compose directory not found"; exit 1; }'
-                    sh 'ls -la deploy.yml || { echo "deploy.yml not found"; exit 1; }'
-                    sh 'ansible-playbook -i inventory.yml deploy.yml --check || { echo "Ansible playbook dry run failed"; exit 1; }'
-                    sh 'ansible-playbook -i inventory.yml deploy.yml || { echo "Ansible playbook failed"; exit 1; }'
+                    echo 'Listing ansible/Docker-compose directory contents...'
+                    sh 'ls -la'
+                    sh 'ansible-playbook -i inventory.yml deploy.yml'
                 }
             }
         }
-
         stage('Verify Deployment') {
             steps {
-                echo 'Verifying deployment...'
-                sh 'docker-compose -f ${COMPOSE_PROJECT_DIR}/docker-compose.yml ps'
-                sh 'docker ps -a'
+                echo 'Verifying Docker Compose deployment...'
+                dir('ansible/Docker-compose') {
+                    sh 'docker-compose -f deploy/docker-compose.yml ps'
+                    sh 'docker ps -a'
+                }
             }
         }
     }
-
     post {
         success {
             echo 'Pipeline completed successfully!'
@@ -195,14 +178,12 @@ pipeline {
                  subject: "✅ Jenkins Pipeline Success: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                  body: "The pipeline ${env.JOB_NAME} #${env.BUILD_NUMBER} completed successfully.\nCheck the build at ${env.BUILD_URL}"
         }
-
         failure {
             echo 'Pipeline failed!'
             mail to: "${EMAIL_RECIPIENT}",
                  subject: "❌ Jenkins Pipeline Failure: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                  body: "The pipeline ${env.JOB_NAME} #${env.BUILD_NUMBER} failed.\nCheck the build at ${env.BUILD_URL}"
         }
-
         always {
             echo 'Cleaning up Docker images to free space...'
             sh 'docker rmi ${DOCKERHUB_USERNAME}/frontend:latest || true'
