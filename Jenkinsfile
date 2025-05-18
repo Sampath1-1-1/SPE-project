@@ -109,27 +109,16 @@ pipeline {
             agent {
                 docker {
                     image 'quay.io/ansible/ansible-runner:latest'
-                    args '-u root'
+                    args '-u root -v /var/lib/jenkins/.kube:/root/.kube -v /var/lib/jenkins/.minikube:/root/.minikube'
                 }
             }
             steps {
                 echo 'Deploying to Kubernetes using Ansible...'
                 dir('ansible/kubernetes') {
-                    echo 'Listing ansible/kubernetes directory contents...'
-                    sh 'ls -la'
                     sh '''
-                        # Install kubernetes.core collection
-                        ansible-galaxy collection install kubernetes.core || { echo "Failed to install kubernetes.core"; exit 1; }
-                        # Debug: Check user, permissions, and files
-                        whoami
-                        id
-                        ls -la /tmp
-                        ls -la ../../Backend/Kubernates
-                        # Copy kubeconfig (adjust path as needed)
-                        mkdir -p ~/.kube
-                        cp /home/sampathkumar/.kube/config ~/.kube/config || { echo "Kubeconfig not found, skipping copy"; true; }
-                        # Run Ansible with verbose output
-                        ansible-playbook -i inventory.yml deploy.yml -vvv || { echo "Ansible deployment failed"; exit 1; }
+                        ansible-galaxy collection install kubernetes.core
+                        pip3 install kubernetes
+                        ansible-playbook -i inventory.yml deploy.yml
                     '''
                 }
             }
@@ -139,17 +128,14 @@ pipeline {
             agent {
                 docker {
                     image 'bitnami/kubectl:1.28'
-                    args '-u root'
+                    args '-u root -v /var/lib/jenkins/.kube:/root/.kube -v /var/lib/jenkins/.minikube:/root/.minikube'
                 }
             }
             steps {
                 echo 'Verifying deployment...'
                 sh '''
-                    # Copy kubeconfig (adjust path as needed)
-                    mkdir -p ~/.kube
-                    cp /home/sampathkumar/.kube/config ~/.kube/config || { echo "Kubeconfig not found, skipping copy"; true; }
-                    kubectl get pods || { echo "Failed to get pods"; exit 1; }
-                    kubectl get svc || { echo "Failed to get services"; exit 1; }
+                    kubectl --kubeconfig=/root/.kube/config get pods
+                    kubectl --kubeconfig=/root/.kube/config get svc
                 '''
             }
         }
@@ -170,7 +156,6 @@ pipeline {
         }
     }
 }
-
 
 
 
