@@ -461,7 +461,6 @@
 
 
 
-
 import pickle
 import numpy as np
 import ipaddress
@@ -477,6 +476,7 @@ import time
 from dateutil.parser import parse as date_parse
 from urllib.parse import urlparse
 import os
+import pandas as pd
 
 class FeatureExtraction:
     features = []
@@ -768,9 +768,9 @@ class FeatureExtraction:
             if len(self.response.history) <= 1:
                 return 1
             elif len(self.response.history) <= 4:
-                return 0енту
-
-            return 0
+                return 0
+            else:
+                return -1
         except:
             return -1
 
@@ -898,9 +898,7 @@ class FeatureExtraction:
     def getFeaturesList(self):
         return self.features
 
-# Function to load model and predict
 def predict_url(url):
-    # Define feature names to match training data
     feature_names = [
         "UsingIp", "longUrl", "shortUrl", "symbol", "redirecting", "prefixSuffix",
         "SubDomains", "Hppts", "DomainRegLen", "Favicon", "NonStdPort", "HTTPSDomainURL",
@@ -910,26 +908,20 @@ def predict_url(url):
         "WebsiteTraffic", "PageRank", "GoogleIndex", "LinksPointingToPage", "StatsReport"
     ]
     
-    # Extract features from the URL
     feature_extractor = FeatureExtraction(url)
     features = feature_extractor.getFeaturesList()
     
-    # Convert to DataFrame with feature names
-    import pandas as pd
     x = pd.DataFrame([features], columns=feature_names)
     
-    # Load the pre-trained model
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     MODEL_PATH = os.path.join(BASE_DIR, 'model.pkl')
     with open(MODEL_PATH, 'rb') as file:
         gbc = pickle.load(file)
     
-    # Predict using the model
     y_pred = gbc.predict(x)[0]
     y_pro_phishing = gbc.predict_proba(x)[0, 0]
     y_pro_non_phishing = gbc.predict_proba(x)[0, 1]
     
-    # Interpret the prediction
     if y_pred == 1:
         result = "Legitimate URL"
         pred = f"It is {y_pro_non_phishing*100:.2f}% safe to go"
