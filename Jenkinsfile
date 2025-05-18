@@ -106,15 +106,12 @@ pipeline {
         }
 
         stage('Deploy to Kubernetes') {
-            agent {
-                docker {
-                    image 'quay.io/ansible/ansible-runner:latest'
-                    args '-u root -v /var/lib/jenkins/.kube:/root/.kube -v /var/lib/jenkins/.minikube:/root/.minikube'
-                }
-            }
+            agent any
             steps {
                 echo 'Deploying to Kubernetes using Ansible...'
                 dir('ansible/kubernetes') {
+                    echo 'Listing Backend/Kubernates directory contents...'
+                    sh 'ls -la ../../Backend/Kubernates/'
                     sh '''
                         ansible-galaxy collection install kubernetes.core
                         pip3 install kubernetes
@@ -125,18 +122,11 @@ pipeline {
         }
 
         stage('Verify Deployment') {
-            agent {
-                docker {
-                    image 'bitnami/kubectl:1.28'
-                    args '-u root -v /var/lib/jenkins/.kube:/root/.kube -v /var/lib/jenkins/.minikube:/root/.minikube'
-                }
-            }
+            agent any
             steps {
                 echo 'Verifying deployment...'
-                sh '''
-                    kubectl --kubeconfig=/root/.kube/config get pods
-                    kubectl --kubeconfig=/root/.kube/config get svc
-                '''
+                sh 'kubectl get pods'
+                sh 'kubectl get svc'
             }
         }
     }
@@ -156,8 +146,6 @@ pipeline {
         }
     }
 }
-
-
 
 
 // pipeline {
