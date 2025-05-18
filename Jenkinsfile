@@ -1,5 +1,5 @@
 pipeline {
-    agent none // Define agent per stage
+    agent none
     environment {
         DOCKERHUB_CREDENTIALS = credentials('DockerHubCred')
         DOCKERHUB_USERNAME = 'sampath333'
@@ -11,7 +11,7 @@ pipeline {
             agent {
                 docker {
                     image 'python:3.11.12-slim'
-                    args '-u root' // Run as root
+                    args '-u root'
                 }
             }
             steps {
@@ -24,7 +24,7 @@ pipeline {
             agent {
                 docker {
                     image 'python:3.11.12-slim'
-                    args '-u root' // Run as root
+                    args '-u root'
                 }
             }
             steps {
@@ -109,7 +109,7 @@ pipeline {
             agent {
                 docker {
                     image 'quay.io/ansible/ansible-runner:latest'
-                    args '-u root' // Run as root for Ansible
+                    args '-u root'
                 }
             }
             steps {
@@ -118,7 +118,13 @@ pipeline {
                     echo 'Listing ansible/kubernetes directory contents...'
                     sh 'ls -la'
                     sh '''
-                        ansible-playbook -i inventory.yml deploy.yml || { echo "Ansible deployment failed"; exit 1; }
+                        # Debug: Check user and permissions
+                        whoami
+                        id
+                        ls -la /tmp
+                        ls -la ../../Backend/Kubernates
+                        # Run Ansible with verbose output
+                        ansible-playbook -i inventory.yml deploy.yml -vvv || { echo "Ansible deployment failed"; exit 1; }
                     '''
                 }
             }
@@ -128,15 +134,14 @@ pipeline {
             agent {
                 docker {
                     image 'bitnami/kubectl:1.28'
-                    args '-u root' // Run as root for kubectl
+                    args '-u root'
                 }
             }
             steps {
                 echo 'Verifying deployment...'
-                // Placeholder for kubeconfig setup (adjust path as needed)
                 sh '''
-                    # Example: Copy kubeconfig to container
-                    # cp /path/to/kubeconfig ~/.kube/config || { echo "Failed to set kubeconfig"; exit 1; }
+                    # Set kubeconfig (adjust path or use credentials)
+                    cp /home/sampathkumar/.kube/config ~/.kube/config || { echo "Kubeconfig not found, skipping copy"; true; }
                     kubectl get pods || { echo "Failed to get pods"; exit 1; }
                     kubectl get svc || { echo "Failed to get services"; exit 1; }
                 '''
