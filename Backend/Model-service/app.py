@@ -4,6 +4,11 @@ from flask_cors import CORS
 import pickle
 import numpy as np
 from feature_extraction import FeatureExtraction, predict_url
+import logging
+
+# Set up logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 CORS(app)
@@ -28,12 +33,14 @@ def predict():
     try:
         # Get JSON data from the request
         data = request.get_json()
+        logger.debug(f"Received data: {data}")
         if not data or 'url' not in data:
             return jsonify({
                 'error': 'Invalid input. Please provide a URL in the JSON body.'
             }), 400
 
         url = data['url']
+        logger.debug(f"Processing URL: {url}")
         if not url:
             return jsonify({
                 'error': 'URL cannot be empty.'
@@ -41,6 +48,7 @@ def predict():
 
         # Use the predict_url function from feature_extraction.py
         result, pred = predict_url(url)
+        logger.debug(f"Prediction result: {result}, prediction: {pred}")
 
         # Return the prediction as JSON
         return jsonify({
@@ -50,6 +58,7 @@ def predict():
         }), 200
 
     except Exception as e:
+        logger.error(f"Error in predict endpoint: {str(e)}", exc_info=True)
         return jsonify({
             'error': f'An error occurred: {str(e)}'
         }), 500

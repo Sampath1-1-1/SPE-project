@@ -32,13 +32,15 @@ class TestModelService(unittest.TestCase):
             except FileNotFoundError:
                 self.fail(f"model.pkl file not found at {model_path}")
 
+    @patch('feature_extraction.googlesearch.search')
     @patch('feature_extraction.requests.get')
     @patch('feature_extraction.whois.whois')
-    def test_predict_endpoint_valid_url(self, mock_whois, mock_requests_get):
+    def test_predict_endpoint_valid_url(self, mock_whois, mock_requests_get, mock_google_search):
         """Test /api/predict with a valid URL."""
         # Mock requests.get to simulate a successful response
         mock_response = unittest.mock.Mock()
         mock_response.text = "<html><body>Test</body></html>"
+        mock_response.status_code = 200
         mock_requests_get.return_value = mock_response
 
         # Mock whois response
@@ -46,6 +48,9 @@ class TestModelService(unittest.TestCase):
             'creation_date': [datetime.datetime(2020, 1, 1)],
             'expiration_date': [datetime.datetime(2025, 1, 1)]
         }
+
+        # Mock google search to return empty results
+        mock_google_search.return_value = []
 
         # Send POST request to /api/predict
         response = self.client.post(
@@ -55,7 +60,7 @@ class TestModelService(unittest.TestCase):
         )
 
         # Check response
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200, f"Expected 200, got {response.status_code}: {response.data}")
         response_data = json.loads(response.data)
         self.assertIn('url', response_data)
         self.assertIn('result', response_data)
@@ -84,7 +89,7 @@ class TestModelService(unittest.TestCase):
             content_type='application/json'
         )
         self.assertEqual(response.status_code, 400)
-        response_data = json.loads(response_data)
+        response_data = json.loads(response.data)
         self.assertIn('error', response_data)
         self.assertEqual(response_data['error'], 'URL cannot be empty.')
 

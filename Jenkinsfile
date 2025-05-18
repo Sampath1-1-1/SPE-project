@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'python:3.11.12-slim'
+            args '-u root' // Run as root to avoid permission issues
+        }
+    }
 
     environment {
         DOCKERHUB_CREDENTIALS = credentials('DockerHubCred')
@@ -20,8 +25,12 @@ pipeline {
             steps {
                 echo 'Running automated tests...'
                 dir('Backend/Model-service') {
-                    // Install dependencies
-                    sh 'python3 -m pip install --user -r requirements.txt'
+                    // Install dependencies, force flask-cors==4.0.1
+                    sh '''
+                        python3 -m pip install --user -r requirements.txt
+                        python3 -m pip install --user flask-cors==4.0.1
+                        pip3 list | grep flask-cors
+                    '''
                     // Debug: Verify model.pkl presence
                     sh 'ls -la | grep model.pkl'
                 }
@@ -29,10 +38,10 @@ pipeline {
                     // Debug: Verify workspace structure
                     sh 'pwd'
                     sh 'ls -la ../Backend/Model-service'
-                    // Set PYTHONPATH and run unittest
+                    // Set PYTHONPATH and run pytest
                     sh '''
                         export PYTHONPATH=$PYTHONPATH:$(pwd)/../Backend/Model-service
-                        python3 -m unittest test_app.py || { echo "Tests failed"; exit 1; }
+                        pytest test_app.py --verbose || { echo "Tests failed"; exit 1; }
                     '''
                 }
             }
@@ -117,7 +126,6 @@ pipeline {
         }
     }
 }
-
 
 
 
