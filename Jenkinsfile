@@ -19,8 +19,16 @@ pipeline {
         stage('Run Tests') {
             steps {
                 echo 'Running automated tests...'
+                dir('Backend/Model-service') {
+                    // Install dependencies
+                    sh 'python3 -m pip install --user -r requirements.txt'
+                }
                 dir('tests') {
-                    sh 'python3 test_app.py'
+                    // Set PYTHONPATH to include Backend/Model-service
+                    sh '''
+                        export PYTHONPATH=$PYTHONPATH:$(pwd)/../Backend/Model-service
+                        python3 -m unittest test_app.py || { echo "Tests failed"; exit 1; }
+                    '''
                 }
             }
         }
@@ -104,7 +112,6 @@ pipeline {
         }
     }
 }
-
 
 
 
