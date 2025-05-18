@@ -56,7 +56,6 @@ pipeline {
                 docker {
                     image 'docker:20.10'
                     args '-v /var/run/docker.sock:/var/run/docker.sock -u root'
-                    // Mount host's Docker socket
                 }
             }
             steps {
@@ -74,7 +73,6 @@ pipeline {
                 docker {
                     image 'docker:20.10'
                     args '-v /var/run/docker.sock:/var/run/docker.sock -u root'
-                    // Mount host's Docker socket
                 }
             }
             steps {
@@ -110,7 +108,7 @@ pipeline {
         stage('Deploy to Kubernetes') {
             agent {
                 docker {
-                    image 'ansible/ansible-runner:latest'
+                    image 'quay.io/ansible/ansible-runner:latest'
                     args '-u root' // Run as root for Ansible
                 }
             }
@@ -119,7 +117,9 @@ pipeline {
                 dir('ansible/kubernetes') {
                     echo 'Listing ansible/kubernetes directory contents...'
                     sh 'ls -la'
-                    sh 'ansible-playbook -i inventory.yml deploy.yml || { echo "Ansible deployment failed"; exit 1; }'
+                    sh '''
+                        ansible-playbook -i inventory.yml deploy.yml || { echo "Ansible deployment failed"; exit 1; }
+                    '''
                 }
             }
         }
@@ -133,8 +133,13 @@ pipeline {
             }
             steps {
                 echo 'Verifying deployment...'
-                sh 'kubectl get pods || { echo "Failed to get pods"; exit 1; }'
-                sh 'kubectl get svc || { echo "Failed to get services"; exit 1; }'
+                // Placeholder for kubeconfig setup (adjust path as needed)
+                sh '''
+                    # Example: Copy kubeconfig to container
+                    # cp /path/to/kubeconfig ~/.kube/config || { echo "Failed to set kubeconfig"; exit 1; }
+                    kubectl get pods || { echo "Failed to get pods"; exit 1; }
+                    kubectl get svc || { echo "Failed to get services"; exit 1; }
+                '''
             }
         }
     }
@@ -154,7 +159,6 @@ pipeline {
         }
     }
 }
-
 
 
 
