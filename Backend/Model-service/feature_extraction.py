@@ -900,8 +900,8 @@ class FeatureExtraction:
 
 def predict_url(url):
     feature_names = [
-        "UsingIp", "longUrl", "shortUrl", "symbol", "redirecting", "prefixSuffix",
-        "SubDomains", "Hppts", "DomainRegLen", "Favicon", "NonStdPort", "HTTPSDomainURL",
+        "UsingIP", "LongURL", "ShortURL", "Symbol@", "Redirecting//", "PrefixSuffix-",
+        "SubDomains", "HTTPS", "DomainRegLen", "Favicon", "NonStdPort", "HTTPSDomainURL",
         "RequestURL", "AnchorURL", "LinksInScriptTags", "ServerFormHandler", "InfoEmail",
         "AbnormalURL", "WebsiteForwarding", "StatusBarCust", "DisableRightClick",
         "UsingPopupWindow", "IframeRedirection", "AgeofDomain", "DNSRecording",
