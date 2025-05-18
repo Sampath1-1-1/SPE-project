@@ -27,9 +27,12 @@ pipeline {
                 dir('Backend/Model-service') {
                     // Install dependencies, force flask-cors==4.0.1
                     sh '''
+                        export PATH=$PATH:/root/.local/bin
                         python3 -m pip install --user -r requirements.txt
                         python3 -m pip install --user flask-cors==4.0.1
-                        pip3 list | grep flask-cors
+                        pip3 list | grep -i flask-cors || echo "flask-cors not found in pip list"
+                        python3 --version
+                        pytest --version || echo "pytest not found"
                     '''
                     // Debug: Verify model.pkl presence
                     sh 'ls -la | grep model.pkl'
@@ -40,6 +43,7 @@ pipeline {
                     sh 'ls -la ../Backend/Model-service'
                     // Set PYTHONPATH and run pytest
                     sh '''
+                        export PATH=$PATH:/root/.local/bin
                         export PYTHONPATH=$PYTHONPATH:$(pwd)/../Backend/Model-service
                         pytest test_app.py --verbose || { echo "Tests failed"; exit 1; }
                     '''
@@ -126,7 +130,6 @@ pipeline {
         }
     }
 }
-
 
 
 
