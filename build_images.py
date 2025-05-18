@@ -42,7 +42,7 @@ for cmd in commands:
 /home/sampathkumar/Desktop/Major_Project_spe (copy)/ansible/kubernetes/inventory.yml
 
 
-
+ansible/kubernetes/roles/deploy_k8s/tasks/main.yml
 
 
 /home/sampathkumar/Desktop/Major_Project_spe (copy)/ansible/Docker-compose/roles/docker-compose/tasks/main.yml
