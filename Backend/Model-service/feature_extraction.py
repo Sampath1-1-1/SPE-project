@@ -458,6 +458,10 @@
 
 #     return result, pred
 
+
+
+
+
 import pickle
 import numpy as np
 import ipaddress
@@ -876,7 +880,7 @@ class FeatureExtraction:
     def StatsReport(self):
         try:
             url_match = re.search(
-                r'at\.ua|usa\.cc|baltazarpresentes\.com\.br|pe\.hu|esy\.es|hol\.es|sweddy\.com|my  r'myjino\.ru|96\.lt|ow\.ly', self.url)
+                r'at\.ua|usa\.cc|baltazarpresentes\.com\.br|pe\.hu|esy\.es|hol\.es|sweddy\.com|myjino\.ru|96\.lt|ow\.ly', self.url)
             ip_address = socket.gethostbyname(self.domain)
             ip_match = re.search(
                 r'146\.112\.61\.108|213\.174\.157\.151|121\.50\.168\.88|192\.185\.217\.116|78\.46\.211\.158|181\.174\.165\.13|46\.242\.145\.103|121\.50\.168\.40|83\.125\.22\.219|46\.242\.145\.98|'
@@ -887,6 +891,8 @@ class FeatureExtraction:
                 r'216\.38\.62\.18|104\.130\.124\.96|47\.89\.58\.141|78\.46\.211\.158|54\.86\.225\.156|54\.82\.156\.19|37\.157\.192\.102|204\.11\.56\.48|110\.34\.231\.42', ip_address)
             if url_match or ip_match:
                 return -1
+            return 1
+        except:
             return 1
 
     def getFeaturesList(self):
