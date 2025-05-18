@@ -24,8 +24,8 @@ class TestModelService(unittest.TestCase):
         """Test if the model.pkl file is loaded correctly."""
         with self.app.app_context():
             try:
-                # Use relative path from tests/ to Backend/Model-service/model.pkl
-                model_path = '../Backend/Model-service/model.pkl'
+                # Use path relative to Backend/Model-service
+                model_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../Backend/Model-service/model.pkl')
                 with open(model_path, 'rb') as file:
                     model = pickle.load(file)
                 self.assertIsNotNone(model, "Model should be loaded successfully")
@@ -84,7 +84,7 @@ class TestModelService(unittest.TestCase):
             content_type='application/json'
         )
         self.assertEqual(response.status_code, 400)
-        response_data = json.loads(response.data)
+        response_data = json.loads(response_data)
         self.assertIn('error', response_data)
         self.assertEqual(response_data['error'], 'URL cannot be empty.')
 

@@ -22,9 +22,14 @@ pipeline {
                 dir('Backend/Model-service') {
                     // Install dependencies
                     sh 'python3 -m pip install --user -r requirements.txt'
+                    // Debug: Verify model.pkl presence
+                    sh 'ls -la | grep model.pkl'
                 }
                 dir('tests') {
-                    // Set PYTHONPATH to include Backend/Model-service
+                    // Debug: Verify workspace structure
+                    sh 'pwd'
+                    sh 'ls -la ../Backend/Model-service'
+                    // Set PYTHONPATH and run unittest
                     sh '''
                         export PYTHONPATH=$PYTHONPATH:$(pwd)/../Backend/Model-service
                         python3 -m unittest test_app.py || { echo "Tests failed"; exit 1; }
@@ -112,10 +117,6 @@ pipeline {
         }
     }
 }
-
-
-
-
 
 
 
