@@ -32,10 +32,10 @@ class TestModelService(unittest.TestCase):
             except FileNotFoundError:
                 self.fail(f"model.pkl file not found at {model_path}")
 
-    @patch('feature_extraction.googlesearch.search')
+    @patch('feature_extraction.search')  # Updated mock path
     @patch('feature_extraction.requests.get')
     @patch('feature_extraction.whois.whois')
-    def test_predict_endpoint_valid_url(self, mock_whois, mock_requests_get, mock_google_search):
+    def test_predict_endpoint_valid_url(self, mock_whois, mock_requests_get, mock_search):
         """Test /api/predict with a valid URL."""
         # Mock requests.get to simulate a successful response
         mock_response = unittest.mock.Mock()
@@ -50,7 +50,7 @@ class TestModelService(unittest.TestCase):
         }
 
         # Mock google search to return empty results
-        mock_google_search.return_value = []
+        mock_search.return_value = []
 
         # Send POST request to /api/predict
         response = self.client.post(
