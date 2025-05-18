@@ -1,5 +1,5 @@
 pipeline {
-    agent none // Define agent per stage to use different containers
+    agent none // Define agent per stage
     environment {
         DOCKERHUB_CREDENTIALS = credentials('DockerHubCred')
         DOCKERHUB_USERNAME = 'sampath333'
@@ -11,7 +11,7 @@ pipeline {
             agent {
                 docker {
                     image 'python:3.11.12-slim'
-                    args '-u root' // Run as root to avoid permission issues
+                    args '-u root' // Run as root
                 }
             }
             steps {
@@ -24,13 +24,12 @@ pipeline {
             agent {
                 docker {
                     image 'python:3.11.12-slim'
-                    args '-u root' // Run as root to avoid permission issues
+                    args '-u root' // Run as root
                 }
             }
             steps {
                 echo 'Running automated tests...'
                 dir('Backend/Model-service') {
-                    // Install dependencies
                     sh '''
                         export PATH=$PATH:/root/.local/bin
                         python3 -m pip install --user -r requirements.txt
@@ -38,14 +37,11 @@ pipeline {
                         python3 --version
                         pytest --version || echo "pytest not found"
                     '''
-                    // Debug: Verify model.pkl presence
                     sh 'ls -la | grep model.pkl'
                 }
                 dir('tests') {
-                    // Debug: Verify workspace structure
                     sh 'pwd'
                     sh 'ls -la ../Backend/Model-service'
-                    // Set PYTHONPATH and run pytest
                     sh '''
                         export PATH=$PATH:/root/.local/bin
                         export PYTHONPATH=$PYTHONPATH:$(pwd)/../Backend/Model-service
@@ -58,8 +54,9 @@ pipeline {
         stage('Clean Existing Docker Images') {
             agent {
                 docker {
-                    image 'docker:20.10-dind'
-                    args '--privileged' // Required for Docker-in-Docker
+                    image 'docker:20.10'
+                    args '-v /var/run/docker.sock:/var/run/docker.sock -u root'
+                    // Mount host's Docker socket
                 }
             }
             steps {
@@ -75,13 +72,13 @@ pipeline {
         stage('Build and Push Docker Images') {
             agent {
                 docker {
-                    image 'docker:20.10-dind'
-                    args '--privileged' // Required for Docker-in-Docker
+                    image 'docker:20.10'
+                    args '-v /var/run/docker.sock:/var/run/docker.sock -u root'
+                    // Mount host's Docker socket
                 }
             }
             steps {
                 echo 'Building Docker images...'
-
                 echo 'Listing frontend directory contents...'
                 dir('frontend') {
                     sh 'ls -la'
@@ -149,7 +146,6 @@ pipeline {
                  subject: "✅ Jenkins Pipeline Success: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                  body: "The pipeline ${env.JOB_NAME} #${env.BUILD_NUMBER} completed successfully.\nCheck the build at ${env.BUILD_URL}"
         }
-
         failure {
             echo 'Pipeline failed!'
             mail to: "${EMAIL_RECIPIENT}",
@@ -158,13 +154,6 @@ pipeline {
         }
     }
 }
-
-
-
-
-
-
-
 
 
 
