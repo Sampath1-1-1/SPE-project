@@ -36,6 +36,9 @@ pipeline {
                         pip3 list | grep -i flask-cors || echo "flask-cors not found in pip list"
                         python3 --version
                         pytest --version || echo "pytest not found"
+                        # Create the directory and copy model.pkl to the expected location
+                        mkdir -p /var/lib/mlService/ml-model
+                        cp model.pkl /var/lib/mlService/ml-model/model.pkl
                     '''
                     sh 'ls -la | grep model.pkl'
                 }
@@ -146,6 +149,8 @@ pipeline {
         }
     }
 }
+
+
 
 
 // pipeline {

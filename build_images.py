@@ -42,8 +42,6 @@ for cmd in commands:
 /home/sampathkumar/Desktop/Major_Project_spe (copy)/ansible/kubernetes/inventory.yml
 
 
-ansible/kubernetes/roles/deploy_k8s/tasks/main.yml
-
 
 /home/sampathkumar/Desktop/Major_Project_spe (copy)/ansible/Docker-compose/roles/docker-compose/tasks/main.yml
 /home/sampathkumar/Desktop/Major_Project_spe (copy)/ansible/Docker-compose/roles/docker-compose/templates/docker-compose.j2
@@ -52,3 +50,37 @@ ansible/kubernetes/roles/deploy_k8s/tasks/main.yml
 /home/sampathkumar/Desktop/Major_Project_spe (copy)/ansible/Docker-compose/roles/docker-compose/vars/main.yml
 /home/sampathkumar/Desktop/Major_Project_spe (copy)/ansible/Docker-compose/deploy.yml
 /home/sampathkumar/Desktop/Major_Project_spe (copy)/ansible/Docker-compose/inventory.yml
+
+
+
+
+/home/sampathkumar/Desktop/Major_Project_spe (copy)/Backend/Kubernates/elasticsearch.yaml
+/home/sampathkumar/Desktop/Major_Project_spe (copy)/Backend/Kubernates/frontend.yaml
+/home/sampathkumar/Desktop/Major_Project_spe (copy)/Backend/Kubernates/kibana.yaml
+/home/sampathkumar/Desktop/Major_Project_spe (copy)/Backend/Kubernates/logstash.yaml
+/home/sampathkumar/Desktop/Major_Project_spe (copy)/Backend/Kubernates/middleware.yaml
+/home/sampathkumar/Desktop/Major_Project_spe (copy)/Backend/Kubernates/model-service.yaml
+/home/sampathkumar/Desktop/Major_Project_spe (copy)/Backend/Kubernates/mysql-secret.yaml
+/home/sampathkumar/Desktop/Major_Project_spe (copy)/Backend/Kubernates/mysql.yaml
+
+/home/sampathkumar/Desktop/Major_Project_spe (copy)/Backend/MiddleWare/app.py
+/home/sampathkumar/Desktop/Major_Project_spe (copy)/Backend/MiddleWare/Dockerfile
+/home/sampathkumar/Desktop/Major_Project_spe (copy)/Backend/MiddleWare/requirements.txt
+
+/home/sampathkumar/Desktop/Major_Project_spe (copy)/Backend/Model-service/app.py
+/home/sampathkumar/Desktop/Major_Project_spe (copy)/Backend/Model-service/Dockerfile
+/home/sampathkumar/Desktop/Major_Project_spe (copy)/Backend/Model-service/feature_extraction.py
+/home/sampathkumar/Desktop/Major_Project_spe (copy)/Backend/Model-service/model.pkl
+/home/sampathkumar/Desktop/Major_Project_spe (copy)/Backend/Model-service/requirements.txt
+
+
+
+/home/sampathkumar/Desktop/Major_Project_spe (copy)/Jenkinsfile
+
+/home/sampathkumar/Desktop/Major_Project_spe (copy)/tests/test_app.py
+
+/home/sampathkumar/Desktop/Major_Project_spe (copy)/frontend/src/utils/api.js
+
+
+/home/sampathkumar/Desktop/Major_Project_spe (copy)/frontend/Dockerfile
+
