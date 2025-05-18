@@ -1,7 +1,6 @@
 ---
-   - name: Deploy application to Kubernetes
-     hosts: localhost
-     connection: local
-     vault_password_file: "{{ playbook_dir }}/vault_pass.txt"
-     roles:
-       - deploy_k8s
+- name: Deploy application to Kubernetes
+  hosts: localhost
+  connection: local
+  roles:
+    - deploy_k8s
