@@ -1,20 +1,19 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.11.12-slim'
-            args '-u root' // Run as root to avoid permission issues
-        }
-    }
-
+    agent none // Define agent per stage to use different containers
     environment {
         DOCKERHUB_CREDENTIALS = credentials('DockerHubCred')
         DOCKERHUB_USERNAME = 'sampath333'
         GIT_REPO_URL = 'https://github.com/Sampath1-1-1/SPE_Project.git'
         EMAIL_RECIPIENT = 'sampathkumar1011c@gmail.com'
     }
-
     stages {
         stage('Checkout Code') {
+            agent {
+                docker {
+                    image 'python:3.11.12-slim'
+                    args '-u root' // Run as root to avoid permission issues
+                }
+            }
             steps {
                 echo 'Checking out code from GitHub...'
                 git url: "${GIT_REPO_URL}", branch: 'main'
@@ -22,6 +21,12 @@ pipeline {
         }
 
         stage('Run Tests') {
+            agent {
+                docker {
+                    image 'python:3.11.12-slim'
+                    args '-u root' // Run as root to avoid permission issues
+                }
+            }
             steps {
                 echo 'Running automated tests...'
                 dir('Backend/Model-service') {
@@ -51,6 +56,12 @@ pipeline {
         }
 
         stage('Clean Existing Docker Images') {
+            agent {
+                docker {
+                    image 'docker:20.10-dind'
+                    args '--privileged' // Required for Docker-in-Docker
+                }
+            }
             steps {
                 echo 'Removing existing Docker images if they exist...'
                 sh '''
@@ -62,6 +73,12 @@ pipeline {
         }
 
         stage('Build and Push Docker Images') {
+            agent {
+                docker {
+                    image 'docker:20.10-dind'
+                    args '--privileged' // Required for Docker-in-Docker
+                }
+            }
             steps {
                 echo 'Building Docker images...'
 
@@ -84,31 +101,43 @@ pipeline {
                 }
 
                 echo 'Logging into Docker Hub...'
-                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_USERNAME --password-stdin'
+                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_USERNAME --password-stdin || { echo "Docker login failed"; exit 1; }'
 
                 echo 'Pushing Docker images to Docker Hub...'
-                sh 'docker push ${DOCKERHUB_USERNAME}/frontend:latest'
-                sh 'docker push ${DOCKERHUB_USERNAME}/middleware:latest'
-                sh 'docker push ${DOCKERHUB_USERNAME}/model-service:latest'
+                sh 'docker push ${DOCKERHUB_USERNAME}/frontend:latest || { echo "Frontend push failed"; exit 1; }'
+                sh 'docker push ${DOCKERHUB_USERNAME}/middleware:latest || { echo "Middleware push failed"; exit 1; }'
+                sh 'docker push ${DOCKERHUB_USERNAME}/model-service:latest || { echo "Model-service push failed"; exit 1; }'
             }
         }
 
         stage('Deploy to Kubernetes') {
+            agent {
+                docker {
+                    image 'ansible/ansible-runner:latest'
+                    args '-u root' // Run as root for Ansible
+                }
+            }
             steps {
                 echo 'Deploying to Kubernetes using Ansible...'
                 dir('ansible/kubernetes') {
-                    echo 'Listing Backend/Kubernates directory contents...'
-                    sh 'ls -la ../../Backend/Kubernates/'
-                    sh 'ansible-playbook -i inventory.yml deploy.yml'
+                    echo 'Listing ansible/kubernetes directory contents...'
+                    sh 'ls -la'
+                    sh 'ansible-playbook -i inventory.yml deploy.yml || { echo "Ansible deployment failed"; exit 1; }'
                 }
             }
         }
 
         stage('Verify Deployment') {
+            agent {
+                docker {
+                    image 'bitnami/kubectl:1.28'
+                    args '-u root' // Run as root for kubectl
+                }
+            }
             steps {
                 echo 'Verifying deployment...'
-                sh 'kubectl get pods'
-                sh 'kubectl get svc'
+                sh 'kubectl get pods || { echo "Failed to get pods"; exit 1; }'
+                sh 'kubectl get svc || { echo "Failed to get services"; exit 1; }'
             }
         }
     }
