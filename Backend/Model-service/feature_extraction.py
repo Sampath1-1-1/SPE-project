@@ -490,21 +490,21 @@ class FeatureExtraction:
         self.soup = ""
 
         try:
-            self.response = requests.get(url, timeout=5)
-            self.soup = BeautifulSoup(self.response.text, 'html.parser')
-        except:
-            pass
-
-        try:
             self.urlparse = urlparse(url)
             self.domain = self.urlparse.netloc
-        except:
-            pass
+        except Exception as e:
+            raise ValueError(f"Failed to parse URL: {str(e)}")
+
+        try:
+            self.response = requests.get(url, timeout=5)
+            self.soup = BeautifulSoup(self.response.text, 'html.parser')
+        except Exception as e:
+            raise ValueError(f"Failed to fetch URL: {str(e)}")
 
         try:
             self.whois_response = whois.whois(self.domain)
-        except:
-            pass
+        except Exception as e:
+            self.whois_response = None  # Allow WHOIS failure to proceed with None
 
         self.features.append(self.UsingIp())
         self.features.append(self.longUrl())
@@ -768,9 +768,9 @@ class FeatureExtraction:
             if len(self.response.history) <= 1:
                 return 1
             elif len(self.response.history) <= 4:
-                return 0
-            else:
-                return -1
+                return 0енту
+
+            return 0
         except:
             return -1
 
@@ -900,9 +900,23 @@ class FeatureExtraction:
 
 # Function to load model and predict
 def predict_url(url):
+    # Define feature names to match training data
+    feature_names = [
+        "UsingIp", "longUrl", "shortUrl", "symbol", "redirecting", "prefixSuffix",
+        "SubDomains", "Hppts", "DomainRegLen", "Favicon", "NonStdPort", "HTTPSDomainURL",
+        "RequestURL", "AnchorURL", "LinksInScriptTags", "ServerFormHandler", "InfoEmail",
+        "AbnormalURL", "WebsiteForwarding", "StatusBarCust", "DisableRightClick",
+        "UsingPopupWindow", "IframeRedirection", "AgeofDomain", "DNSRecording",
+        "WebsiteTraffic", "PageRank", "GoogleIndex", "LinksPointingToPage", "StatsReport"
+    ]
+    
     # Extract features from the URL
     feature_extractor = FeatureExtraction(url)
-    x = np.array(feature_extractor.getFeaturesList()).reshape(1, 30)
+    features = feature_extractor.getFeaturesList()
+    
+    # Convert to DataFrame with feature names
+    import pandas as pd
+    x = pd.DataFrame([features], columns=feature_names)
     
     # Load the pre-trained model
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))

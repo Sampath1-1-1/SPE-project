@@ -25,11 +25,10 @@ pipeline {
             steps {
                 echo 'Running automated tests...'
                 dir('Backend/Model-service') {
-                    // Install dependencies, force flask-cors==4.0.1
+                    // Install dependencies
                     sh '''
                         export PATH=$PATH:/root/.local/bin
                         python3 -m pip install --user -r requirements.txt
-                        python3 -m pip install --user flask-cors==4.0.1
                         pip3 list | grep -i flask-cors || echo "flask-cors not found in pip list"
                         python3 --version
                         pytest --version || echo "pytest not found"
