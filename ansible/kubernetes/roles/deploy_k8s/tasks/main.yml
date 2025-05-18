@@ -5,15 +5,6 @@
     mode: '0755'
 
 - name: Deploy Kubernetes manifests
-  kubernetes.core.k8s:
-    state: present
-    src: "{{ item }}"
-  loop:
-    - "{{ manifests_dir }}/mysql-secret.yaml"
-    - "{{ manifests_dir }}/mysql.yaml"
-    - "{{ manifests_dir }}/model-service.yaml"
-    - "{{ manifests_dir }}/middleware.yaml"
-    - "{{ manifests_dir }}/frontend.yaml"
-    - "{{ manifests_dir }}/elasticsearch.yaml"
-    - "{{ manifests_dir }}/kibana.yaml"
-    - "{{ manifests_dir }}/logstash.yaml"
+  ansible.builtin.command: /tmp/deploy_manifests.sh
+  become: yes
+  become_user: jenkins
