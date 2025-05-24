@@ -79,6 +79,6 @@ for cmd in commands:
 
 /home/sampathkumar/Desktop/Major_Project_spe (copy)/tests/test_app.py
 
-/home/sampathkumar/Desktop/Major_Project_spe (copy)/frontend/src/utils/api.js
+# /home/sampathkumar/Desktop/Major_Project_spe (copy)/frontend/src/utils/api.js
 
 
