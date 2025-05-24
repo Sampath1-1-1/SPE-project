@@ -16,3 +16,6 @@
      ansible.builtin.command: /tmp/deploy_manifests.sh
      become: yes
      become_user: jenkins
+
+
+     
