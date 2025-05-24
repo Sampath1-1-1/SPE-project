@@ -82,5 +82,3 @@ for cmd in commands:
 /home/sampathkumar/Desktop/Major_Project_spe (copy)/frontend/src/utils/api.js
 
 
-/home/sampathkumar/Desktop/Major_Project_spe (copy)/frontend/Dockerfile
-
