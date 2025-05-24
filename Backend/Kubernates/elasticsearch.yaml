@@ -10,6 +10,9 @@ spec:
     - ReadWriteOnce
   hostPath:
     path: /data/elasticsearch
+
+
+
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -21,6 +24,9 @@ spec:
   resources:
     requests:
       storage: 5Gi
+
+
+
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -67,6 +73,9 @@ spec:
         - name: elasticsearch-storage
           persistentVolumeClaim:
             claimName: elasticsearch-pvc
+
+
+
 ---
 apiVersion: v1
 kind: Service
@@ -78,6 +87,9 @@ spec:
       targetPort: 9200
   selector:
     app: elasticsearch
+
+
+    
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler

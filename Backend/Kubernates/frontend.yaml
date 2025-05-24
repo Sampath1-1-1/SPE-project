@@ -28,6 +28,10 @@ spec:
             limits:
               cpu: "200m"
               memory: "512Mi"
+
+
+
+
 ---
 apiVersion: v1
 kind: Service
@@ -41,6 +45,11 @@ spec:
       nodePort: 30006 
   selector:
     app: frontend 
+
+
+
+
+    
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
